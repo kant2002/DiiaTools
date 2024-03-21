@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DiiaTools": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\d\\github\\diia\\"
+    }
+  }
+}
