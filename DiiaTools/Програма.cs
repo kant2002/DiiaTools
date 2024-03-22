@@ -1,11 +1,94 @@
-﻿using System.Text.RegularExpressions;
+﻿using QuikGraph;
+using QuikGraph.Graphviz;
+using QuikGraph.Graphviz.Dot;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using Система;
 using Система.ВВ;
 
-var папкаІзДією = args[0];
-var усіЗмінні = new Dictionary<string, ЗміннаОточення>();
-var описиЗмінних = new ОписЗмінноїОточення[]
+/*
+cd <diia>\be-diia-queue\dist\queueConfig
+node
+const x = require("./configs.js")
+const fs = require("fs")
+fs.writeFileSync("Події.json", JSON.stringify(x))
+ */
+var файл = Файл.ПрочитатиУсіТекст("Події.json");
+var описСервісів = JsonSerializer.Deserialize<ОписСервісівСистеми>(файл);
+var s1 = описСервісів.servicesConfig.@internal.SelectMany(__ =>
 {
+    var черги = __.Value.subscribe ?? Array.Empty<string>();
+    return черги.Select(_ => new Edge<ВузелСистеми>(new(_, ТипВузла.Черга), new(__.Key, ТипВузла.Сервіс)));
+    //return черги.Select(_ => new Edge<ВузелСистеми>(new(__.Key, ТипВузла.Сервіс), new(_, ТипВузла.Черга)));
+});
+var s2 = описСервісів.servicesConfig.@internal.SelectMany(__ =>
+{
+    var черги = __.Value.publish ?? Array.Empty<string>();
+    return черги.Select(_ => new Edge<ВузелСистеми>(new(__.Key, ТипВузла.Сервіс), new(_, ТипВузла.Тема)));
+});
+var s3 = описСервісів.queuesConfig.@internal.SelectMany(__ =>
+{
+    var черги = __.Value.topics ?? Array.Empty<string>();
+    //return черги.Select(_ => new Edge<ВузелСистеми>(new(__.Key, ТипВузла.Черга), new(_, ТипВузла.Тема)));
+    return черги.Select(_ => new Edge<ВузелСистеми>(new(_, ТипВузла.Тема), new(__.Key, ТипВузла.Черга)));
+});
+var s4 = описСервісів.topicsConfig.@internal.SelectMany(__ =>
+{
+    var черги = __.Value.events ?? Array.Empty<string>();
+    //return черги.Select(_ => new Edge<ВузелСистеми>(new(__.Key, ТипВузла.Тема), new(_, ТипВузла.Подія)));
+    return черги.Select(_ => new Edge<ВузелСистеми>(new(_, ТипВузла.Подія), new(__.Key, ТипВузла.Тема)));
+});
+//var ребра = s1/*.Union(s2)*/.Union(s3).Union(s4).ToArray();
+//var ребра = s2.Union(s3).Union(s4).ToArray();
+var ребра = s2.Union(s1).Union(s3).Union(s4).ToArray();
+var граф = ребра.ToAdjacencyGraph<ВузелСистеми, Edge<ВузелСистеми>>();
+string графЯкDot = граф.ToGraphviz(алгоритм =>
+{
+    алгоритм.CommonVertexFormat.Shape = GraphvizVertexShape.Diamond;
+    алгоритм.CommonEdgeFormat.ToolTip = "Edge tooltip";
+    алгоритм.GraphFormat.RankDirection = GraphvizRankDirection.TB;
+    алгоритм.FormatVertex += (_, args) =>
+    {
+        args.VertexFormat.Label = args.Vertex.Назва;
+        args.VertexFormat.Shape = args.Vertex.Тип switch
+        {
+            ТипВузла.Подія => GraphvizVertexShape.Box,
+            ТипВузла.Тема => GraphvizVertexShape.Box,
+            ТипВузла.Сервіс => GraphvizVertexShape.Polygon,
+            ТипВузла.Черга => GraphvizVertexShape.Box,
+            _ => throw new InvalidOperationException(),
+        }; 
+        args.VertexFormat.FontColor = args.Vertex.Тип switch
+        {
+            ТипВузла.Подія => GraphvizColor.Black,
+            ТипВузла.Тема => GraphvizColor.Black,
+            ТипВузла.Сервіс => GraphvizColor.White,
+            ТипВузла.Черга => GraphvizColor.White,
+            _ => throw new InvalidOperationException(),
+        };
+        args.VertexFormat.Style = GraphvizVertexStyle.Filled;
+        args.VertexFormat.FillColor = args.Vertex.Тип switch
+        {
+            ТипВузла.Подія => GraphvizColor.White,
+            ТипВузла.Тема => GraphvizColor.Red,
+            ТипВузла.Сервіс => GraphvizColor.Black,
+            ТипВузла.Черга => GraphvizColor.Blue,
+            _ => throw new InvalidOperationException(),
+        };
+
+        args.VertexFormat.Group = args.Vertex.Тип == ТипВузла.Сервіс ? "Сервіс" : "";
+    };
+});
+Файл.ЗаписатиВесьТекст("Події.dot", графЯкDot);
+
+//var папкаІзДією = args[0];
+//ЗробитиОписЗміннихОточення(папкаІзДією);
+
+void ЗробитиОписЗміннихОточення(string папкаІзДією)
+{
+    var усіЗмінні = new Dictionary<string, ЗміннаОточення>();
+    var описиЗмінних = new ОписЗмінноїОточення[]
+    {
     new () { Назва = "AUTH_MONOBANK_API_TOKEN",         ЗовнішнійКомпонент = "MONOBANK", Опис = "" },
     new () { Назва = "AUTH_MONOBANK_BASE_URL",          ЗовнішнійКомпонент = "MONOBANK", Опис = "" },
     new () { Назва = "AUTH_MONOBANK_IS_ENABLED",        ЗовнішнійКомпонент = "MONOBANK", Опис = "" },
@@ -109,82 +192,83 @@ var описиЗмінних = new ОписЗмінноїОточення[]
     new () { Назва = "ZIPKIN_IS_ENABLED",               ЗовнішнійКомпонент = "ZIPKIN", Опис = "" },
     new () { Назва = "ZIPKIN_SEND_INTERVAL_SEC",        ЗовнішнійКомпонент = "ZIPKIN", Опис = "" },
     new () { Назва = "ZIPKIN_URL",                      ЗовнішнійКомпонент = "ZIPKIN", Опис = "" },
-};
-foreach (var папкаМодуля in Directory.EnumerateDirectories(папкаІзДією))
-{
-    var файлОписа = Path.Combine(папкаМодуля, "package.json");
-    if (!Файл.Існує(файлОписа))
+    };
+    foreach (var папкаМодуля in Directory.EnumerateDirectories(папкаІзДією))
     {
-        continue;
-    }
-
-    var змінні = new Dictionary<string, ЗміннаОточення>();
-    if (Directory.Exists(Path.Combine(папкаМодуля, "src")))
-    {
-        foreach (var ісходнийФайл in Directory.EnumerateFiles(папкаМодуля, "src/*.ts", SearchOption.AllDirectories))
+        var файлОписа = Path.Combine(папкаМодуля, "package.json");
+        if (!Файл.Існує(файлОписа))
         {
-            var зміст = Файл.ПрочитатиУсіТекст(ісходнийФайл);
-            var співставленняЗміннихОточення = Regex.Matches(зміст, @"process\s*.\s*env\s*.\s*([A-Za-z_]*)", RegexOptions.Singleline);
-            foreach (var співставлення in співставленняЗміннихОточення.OfType<Match>())
+            continue;
+        }
+
+        var змінні = new Dictionary<string, ЗміннаОточення>();
+        if (Directory.Exists(Path.Combine(папкаМодуля, "src")))
+        {
+            foreach (var ісходнийФайл in Directory.EnumerateFiles(папкаМодуля, "src/*.ts", SearchOption.AllDirectories))
             {
-                var змінна = співставлення.Groups[1].Value;
-                if (змінні.TryGetValue(змінна, out var дані))
+                var зміст = Файл.ПрочитатиУсіТекст(ісходнийФайл);
+                var співставленняЗміннихОточення = Regex.Matches(зміст, @"process\s*.\s*env\s*.\s*([A-Za-z_]*)", RegexOptions.Singleline);
+                foreach (var співставлення in співставленняЗміннихОточення.OfType<Match>())
                 {
-                    дані.ЄЗмінноюОточення = true;
+                    var змінна = співставлення.Groups[1].Value;
+                    if (змінні.TryGetValue(змінна, out var дані))
+                    {
+                        дані.ЄЗмінноюОточення = true;
+                    }
+                    else
+                    {
+                        змінні.Add(змінна, new ЗміннаОточення { ЄЗмінноюОточення = true, ЗовнішнійКомпонент = ВзятиЗовнішнійКомпонент(змінна) });
+                    }
                 }
-                else
+
+                var співставленняЗміннихСервісу = Regex.Matches(зміст, @"envService\s*.\s*getVar\s*\(\s*'([A-Za-z_]*)'", RegexOptions.Singleline);
+                foreach (var співставлення in співставленняЗміннихСервісу.OfType<Match>())
                 {
-                    змінні.Add(змінна, new ЗміннаОточення { ЄЗмінноюОточення = true, ЗовнішнійКомпонент = ВзятиЗовнішнійКомпонент(змінна) });
+                    var змінна = співставлення.Groups[1].Value;
+                    if (змінні.TryGetValue(змінна, out var дані))
+                    {
+                        дані.ЄЗмінноюСервісаОточення = true;
+                    }
+                    else
+                    {
+                        змінні.Add(змінна, new ЗміннаОточення { ЄЗмінноюСервісаОточення = true, ЗовнішнійКомпонент = ВзятиЗовнішнійКомпонент(змінна) });
+                    }
                 }
             }
+        }
 
-            var співставленняЗміннихСервісу = Regex.Matches(зміст, @"envService\s*.\s*getVar\s*\(\s*'([A-Za-z_]*)'", RegexOptions.Singleline);
-            foreach (var співставлення in співставленняЗміннихСервісу.OfType<Match>())
+        var назваМодуля = Path.GetFileName(папкаМодуля);
+        //НадрукуватиЗмінні(назваМодуля, змінні);
+        ОбєднатиЗмінні(назваМодуля, змінні);
+    }
+
+    //НадрукуватиУсіЗмінні(усіЗмінні);
+    НадрукуватиУсіЗмінніПоЗовнішнімКомпонентам(усіЗмінні);
+
+    void ОбєднатиЗмінні(string назваМодуля, Dictionary<string, ЗміннаОточення> змінні)
+    {
+        foreach (var назва in змінні.Keys)
+        {
+            var змінна = змінні[назва];
+
+            if (усіЗмінні.TryGetValue(назва, out var глобальнаЗмінна))
             {
-                var змінна = співставлення.Groups[1].Value;
-                if (змінні.TryGetValue(змінна, out var дані))
-                {
-                    дані.ЄЗмінноюСервісаОточення = true;
-                }
-                else
-                {
-                    змінні.Add(змінна, new ЗміннаОточення { ЄЗмінноюСервісаОточення = true, ЗовнішнійКомпонент = ВзятиЗовнішнійКомпонент(змінна) });
-                }
+                глобальнаЗмінна.ЄЗмінноюСервісаОточення = змінна.ЄЗмінноюСервісаОточення || глобальнаЗмінна.ЄЗмінноюСервісаОточення;
+                глобальнаЗмінна.ЄЗмінноюОточення = змінна.ЄЗмінноюОточення || глобальнаЗмінна.ЄЗмінноюОточення;
+                глобальнаЗмінна.Модулі.Add(назваМодуля);
+            }
+            else
+            {
+                усіЗмінні.Add(назва, змінна);
+                змінна.Модулі.Add(назваМодуля);
             }
         }
     }
 
-    var назваМодуля = Path.GetFileName(папкаМодуля);
-    //НадрукуватиЗмінні(назваМодуля, змінні);
-    ОбєднатиЗмінні(назваМодуля, змінні);
-}
-
-//НадрукуватиУсіЗмінні(усіЗмінні);
-НадрукуватиУсіЗмінніПоЗовнішнімКомпонентам(усіЗмінні);
-
-void ОбєднатиЗмінні(string назваМодуля, Dictionary<string, ЗміннаОточення> змінні)
-{
-    foreach (var назва in змінні.Keys)
+    string ВзятиЗовнішнійКомпонент(string змінна)
     {
-        var змінна = змінні[назва];
-
-        if (усіЗмінні.TryGetValue(назва, out var глобальнаЗмінна))
-        {
-            глобальнаЗмінна.ЄЗмінноюСервісаОточення = змінна.ЄЗмінноюСервісаОточення || глобальнаЗмінна.ЄЗмінноюСервісаОточення;
-            глобальнаЗмінна.ЄЗмінноюОточення = змінна.ЄЗмінноюОточення || глобальнаЗмінна.ЄЗмінноюОточення;
-            глобальнаЗмінна.Модулі.Add(назваМодуля);
-        }
-        else
-        {
-            усіЗмінні.Add(назва, змінна);
-            змінна.Модулі.Add(назваМодуля);
-        }
+        return описиЗмінних.FirstOrDefault(_ => _.Назва == змінна)?.ЗовнішнійКомпонент ?? "";
     }
-}
-
-string ВзятиЗовнішнійКомпонент(string змінна)
-{
-    return описиЗмінних.FirstOrDefault(_ => _.Назва == змінна)?.ЗовнішнійКомпонент ?? "";
 }
 
 static void НадрукуватиЗмінні(string назваМодуля, Dictionary<string, ЗміннаОточення> змінні)
@@ -274,4 +358,54 @@ class ЗміннаОточення
     public required string ЗовнішнійКомпонент { get; set; }
 
     public HashSet<string> Модулі { get; set; } = new();
+}
+
+class ЧергиСервіса
+{
+    public string[]? subscribe { get; set; }
+    public string[]? publish { get; set; }
+}
+
+class ТемиЧерги
+{
+    public string[] topics { get; set; }
+}
+
+class ПодіїТопіка
+{
+    public string[] events { get; set; }
+}
+
+class КонфігЧерг
+{
+    public Dictionary<string, ТемиЧерги> @internal { get; set; }
+}
+
+class КонфігТем
+{
+    public Dictionary<string, ПодіїТопіка> @internal { get; set; }
+    public Dictionary<string, ПодіїТопіка> external { get; set; }
+}
+
+class КонфігСервісів
+{
+    public Dictionary<string, ЧергиСервіса> @internal { get; set; }
+    public Dictionary<string, ЧергиСервіса> external { get; set; }
+}
+
+class ОписСервісівСистеми
+{
+    public КонфігСервісів servicesConfig { get; set; }
+    public КонфігЧерг queuesConfig { get; set; }
+    public КонфігТем topicsConfig { get; set; }
+}
+
+record ВузелСистеми(string Назва, ТипВузла Тип);
+
+public enum ТипВузла
+{
+    Сервіс,
+    Черга,
+    Тема,
+    Подія,
 }
