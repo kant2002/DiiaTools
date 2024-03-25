@@ -1,4 +1,7 @@
+Список змінних | [По модулям](./env-vars-list-by-module) | [По зовнішнім системам](./env-vars-list-by-external)
+
 # Усі змінні
+
 | Змінна | Оточення | Сервіс | Зовнішній сервіс | Модулі |
 | ------ | -------- | ------ | ---- | ---- |
 | ANDROID_MIN_APP_VERSION                  |                      | :white_check_mark:   |  | be-gateway-service |
