@@ -9,3 +9,14 @@
 
 ## Сервіси
 - [Сервіс Адресів](./address-service)
+
+## OpenAPI
+
+- [Сервіс Адресів](./swaggeriu/address.html)
+- [Сервіс авторізації](./swaggeriu/auth.html)
+- [Сервіс судимості](./swaggeriu/criminal-cert.html)
+- [Сервіс документів користувача](./swaggeriu/documents.html)
+- [Сервіс ленти](./swaggeriu/feed.html)
+- [Шлюз](./swaggeriu/gateway.html)
+- [Каталог публічних сервісів](./swaggeriu/public-service-catalog.html)
+- [Сервіс користувача](./swaggeriu/user.html)
