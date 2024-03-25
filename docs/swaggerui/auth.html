@@ -18,7 +18,7 @@
         window.onload = function () {
             const address = window.location.href.split('#')[0];
             window.ui = SwaggerUIBundle({
-                url: address.substring(0, address.lastIndexOf('/') + 1) + "../openapi/address.json",
+                url: address.substring(0, address.lastIndexOf('/') + 1) + "../openapi/auth.json",
                 dom_id: '#swagger-ui',
                 deepLinking: true,
             });
