@@ -22,6 +22,18 @@
 - [Каталог публічних сервісів](./swaggeriu/public-service-catalog.html)
 - [Сервіс користувача](./swaggeriu/user.html)
 
+## GRPC
+
+- [Сервіс Адресів](https://github.com/kant2002/be-address-service-client/blob/main/proto/address-service.proto)
+- [Сервіс авторізації](https://github.com/diia-open-source/be-auth-service/blob/main/proto/auth.proto)
+- [Сервіс судимості](https://github.com/diia-open-source/be-criminal-cert-service/blob/main/proto/criminal-cert-service.proto)
+- [Сервіс документів користувача](https://github.com/diia-open-source/be-documents-service/blob/main/proto/documents-service.proto)
+- [Каталог публічних сервісів](https://github.com/diia-open-source/be-public-service-catalog/blob/main/proto/public-service-catalog.proto)
+- [Сервіс користувача](https://github.com/diia-open-source/be-user-service/blob/main/proto/user-service.proto)
+- [Сервіс крипто примітивів](https://github.com/kant2002/be-diia-crypto-client/blob/main/proto/crypto-service.proto)
+- [Сервіс повідомлень](https://github.com/kant2002/be-notification-service-client/blob/main/proto/notification-service.proto)
+- [Сервіс аналітики](https://github.com/kant2002/be-analytics-service-client/blob/main/proto/analytics-service.proto)
+
 ## Опис архітектури
 
 дуже поверхнево, і я ще викладені сервіси не аналізував детально, тому велика імовірність що я десь провтикаю глобально.
