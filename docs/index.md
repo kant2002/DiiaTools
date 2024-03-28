@@ -34,6 +34,89 @@
 - [Сервіс повідомлень](https://github.com/kant2002/be-notification-service-client/blob/main/proto/notification-service.proto)
 - [Сервіс аналітики](https://github.com/kant2002/be-analytics-service-client/blob/main/proto/analytics-service.proto)
 
+## 
+
+```
+> show dbs;
+admin                        80.00 KiB
+config                      176.00 KiB
+diia-auth-service           192.00 KiB
+diia-criminal-cert-service   24.00 KiB
+diia-documents-service       80.00 KiB
+diia-gateway                104.00 KiB
+diia-user-service           388.00 KiB
+local                       516.00 KiB
+```
+
+```
+> use config;
+switched to db config
+config> show collections;
+external_validation_keys
+image_collection
+tenantMigrationDonors
+tenantMigrationRecipients
+transactions
+system.indexBuilds
+system.sessions
+```
+
+### diia-public-service-catalog-service
+
+```
+diia-public-service-catalog-service> show tables;
+migrations
+publicservicecategories
+publicservices
+```
+
+```
+diia-public-service-catalog-service> db.publicservicecategories.find().toArray()
+[
+  {
+    _id: ObjectId('66058050bcca83424452c3d3'),
+    category: 'certificates',
+    name: 'Довідки та витяги',
+    icon: '📋',
+    status: 'active',
+    sortOrder: 1600,
+    tabCodes: [ 'citizen' ]
+  }
+]
+diia-public-service-catalog-service> db.publicservices.find().toArray()
+[
+  {
+    _id: ObjectId('66058050bcca83424452c3d1'),
+    code: 'criminalRecordCertificate',
+    name: 'Довідка про несудимість',
+    status: 'active',
+    sortOrder: 1630,
+    categories: [ 'certificates' ],
+    contextMenu: [
+      {
+        type: 'faqCategory',
+        code: 'criminalRecordCertificate',
+        name: 'Питання та відповіді'
+      },
+      { type: 'supportServiceScreen', name: 'Служба підтримки' },
+      {
+        type: 'rating',
+        name: 'Оцінити послугу',
+        appVersions: {
+          minVersion: { iOS: '3.0.0', Android: '3.0.0', Huawei: '3.0.00' }
+        }
+      }
+    ],
+    sessionTypes: [ 'User' ],
+    appVersions: {
+      User: {
+        minVersion: { iOS: '3.0.30', Android: '3.0.30', Huawei: '3.0.30' }
+      }
+    }
+  }
+]
+```
+
 ## Опис архітектури
 
 дуже поверхнево, і я ще викладені сервіси не аналізував детально, тому велика імовірність що я десь провтикаю глобально.
