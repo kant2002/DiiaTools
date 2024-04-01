@@ -8,4 +8,9 @@
     <PublishAot>true</PublishAot>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Ukrainian.Microsoft.AspNetCore.App" Version="0.0.3" />
+    <PackageReference Include="Ukrainian.Microsoft.AspNetCore.HttpLogging" Version="0.0.1" />
+  </ItemGroup>
+
 </Project>
