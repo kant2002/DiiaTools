@@ -9,14 +9,15 @@ var будівник = ВебАплікація.СтворитиБудівник
 //});
 
 var апка = будівник.Побудувати();
+var серверДії = "http://localhost:8080";
+var код = "123";
 
-апка.MapGet("/v1/bank/oauth2/authorize", ([FromQuery(Name = "response_type")]string response_type, [FromQuery(Name = "client_id")] string client_id, [FromQuery(Name = "state")] string state, [FromQuery(Name = "bank_id")] string? bank_id, [FromQuery(Name = "token")] string? token) =>
+апка.ВідобразитиGet("/v1/bank/oauth2/authorize", ([FromQuery(Name = "response_type")]string response_type, [FromQuery(Name = "client_id")] string client_id, [FromQuery(Name = "state")] string state, [FromQuery(Name = "bank_id")] string? bank_id, [FromQuery(Name = "token")] string? token) =>
 {
     if (token is null)
-        return Results.Content("<h1>Hello world</h1>", "text/html");
-    var code = "123";
+        return Results.Content("<h1>Привіт світ/h1>", "text/html");
 
-	return Results.Content($"Redirecting to http://localhost:8080/api/v1/auth/bank-id/code/callback?code={code}.", statusCode: 302);
+	return Results.Content($"Redirecting to {серверДії}/api/v1/auth/bank-id/code/callback?code={код}.", statusCode: 302);
 });
 
 апка.ВикористовуватиПеренаправленняHttps();
