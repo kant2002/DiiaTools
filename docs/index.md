@@ -8,7 +8,7 @@
 - [Список змінних оточення](./env-vars-list)
 - [Список операція молекулера](./moleculer-actions)
 - [Бази даних Mongo](./dbs)
-- [Авторізація](./api/auth)
+- [Авторизація](./api/auth)
 
 ## Сервіси
 - [Сервіс Адресів](./address-service)
@@ -27,7 +27,7 @@
 ## GRPC
 
 - [Сервіс Адресів](https://github.com/kant2002/be-address-service-client/blob/main/proto/address-service.proto)
-- [Сервіс авторізації](https://github.com/diia-open-source/be-auth-service/blob/main/proto/auth.proto)
+- [Сервіс авторизації](https://github.com/diia-open-source/be-auth-service/blob/main/proto/auth.proto)
 - [Сервіс судимості](https://github.com/diia-open-source/be-criminal-cert-service/blob/main/proto/criminal-cert-service.proto)
 - [Сервіс документів користувача](https://github.com/diia-open-source/be-documents-service/blob/main/proto/documents-service.proto)
 - [Каталог публічних сервісів](https://github.com/diia-open-source/be-public-service-catalog/blob/main/proto/public-service-catalog.proto)
