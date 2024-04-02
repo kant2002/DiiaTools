@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# Default severity for analyzer diagnostics with category 'AOT'
+dotnet_analyzer_diagnostic.category-AOT.severity = silent
+
+# Default severity for analyzer diagnostics with category 'Trimming'
+dotnet_analyzer_diagnostic.category-Trimming.severity = suggestion
