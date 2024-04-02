@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package ua.gov.diia.crypto;
+
+option csharp_namespace = "Ua.Gov.Diia.Crypto";
+
+// The greeting service definition.
+service BankIdCryptoService {
+
+  rpc generateCertificate (GenerateCertificateRequest) returns (GenerateCertificateResponse) {}
+
+  rpc decrypt (DevelopUserDataRequest) returns (DevelopUserDataResponse) {}
+}
+
+
+message GenerateCertificateRequest {
+    optional string jwt = 1;
+}
+
+message GenerateCertificateResponse {
+    string cert = 1;
+}
+
+message DevelopUserDataRequest {
+    string customerCrypto = 1;
+    string cert = 2;
+    optional string state = 3;
+    optional string sidBi = 4;
+    optional string memberId = 5;
+    optional string timestamp = 6;
+}
+
+message DevelopUserDataResponse {
+    string data = 1;
+}

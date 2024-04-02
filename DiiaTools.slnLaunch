@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Auth",
+    "Projects": [
+      {
+        "Name": "FakeBankId\\FakeBankId.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Name": "FakeDiiaCrypto\\FakeDiiaCrypto.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]

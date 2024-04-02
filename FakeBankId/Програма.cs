@@ -4,10 +4,10 @@ using Мікрософт.АспНетЯдро.Будівник;
 
 var будівник = ВебАплікація.СтворитиБудівника(args);
 будівник.Сервіси.ДодатиHttpПротоколювання(options => { });
-//будівник.Сервіси.ConfigureHttpJsonOptions(options =>
-//{
-//    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
-//});
+будівник.Сервіси.ConfigureHttpJsonOptions(options =>
+{
+	options.SerializerOptions.TypeInfoResolverChain.Insert(0, СеріалізаційнийКонтекстJsonАпки.Default);
+});
 
 var апка = будівник.Побудувати();
 var серверДії = "http://localhost:8080";
@@ -32,14 +32,19 @@ var код = "123";
 """);
 }).ВідключитиАнтіПідробку();
 
+апка.ВідобразитиPost("/v1/bank/resource/client", () =>
+{
+	return Results.Json(new ІнформаціяКлієнта("state", "cert", "customerCrypto", "memberId"));
+}).ВідключитиАнтіПідробку();
+
 апка.ВикористовуватиПеренаправленняHttps();
 апка.ВикористовуватиHttpПротоколювання();
 апка.Запустити();
 
-//public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
+public record ІнформаціяКлієнта(string state, string cert, string customerCrypto, string memberId);
 
-//[JsonSerializable(typeof(Todo[]))]
-//internal partial class AppJsonSerializerContext : JsonSerializerContext
-//{
+[JsonSerializable(typeof(ІнформаціяКлієнта))]
+internal partial class СеріалізаційнийКонтекстJsonАпки : JsonSerializerContext
+{
 
-//}
+}
