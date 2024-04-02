@@ -13,7 +13,7 @@ var апка = будівник.Побудувати();
 var серверДії = "http://localhost:8080";
 var код = "123";
 
-апка.ВідобразитиGet("/v1/bank/oauth2/authorize", ([FromQuery(Name = "response_type")]string типЗапиту, [FromQuery(Name = "client_id")] string ідКлієнта, [FromQuery(Name = "state")] string state, [FromQuery(Name = "bank_id")] string? ідБанка, [FromQuery(Name = "token")] string? token) =>
+апка.ВідобразитиGet("/v1/bank/oauth2/authorize", ([FromQuery(Name = "response_type")]string типЗапиту, [FromQuery(Name = "client_id")] string ідКлієнта, [FromQuery(Name = "state")] string стан, [FromQuery(Name = "bank_id")] string? ідБанка, [FromQuery(Name = "token")] string? token) =>
 {
     if (token is null)
         return Results.Content("<h1>Привіт світ/h1>", "text/html");
@@ -21,7 +21,7 @@ var код = "123";
 	return Results.Content($"Redirecting to {серверДії}/api/v1/auth/bank-id/code/callback?code={код}.", statusCode: 302);
 });
 
-апка.ВідобразитиPost("/v1/bank/oauth2/token", ([FromForm(Name = "code")] string code, [FromForm(Name = "grant_type")] string grant_type, [FromForm(Name = "client_id")] string ідКлієнта, [FromForm(Name = "client_secret")] string client_secret) =>
+апка.ВідобразитиPost("/v1/bank/oauth2/token", ([FromForm(Name = "code")] string код, [FromForm(Name = "grant_type")] string типДозволу, [FromForm(Name = "client_id")] string ідКлієнта, [FromForm(Name = "client_secret")] string секретКлієнта) =>
 {
 	return Results.Content($$"""
 {
