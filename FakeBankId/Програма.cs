@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using Мікрософт.АспНетЯдро.Будівник;
 
 var будівник = ВебАплікація.СтворитиБудівника(args);
 будівник.Сервіси.ДодатиHttpПротоколювання(options => { });
@@ -12,13 +13,24 @@ var апка = будівник.Побудувати();
 var серверДії = "http://localhost:8080";
 var код = "123";
 
-апка.ВідобразитиGet("/v1/bank/oauth2/authorize", ([FromQuery(Name = "response_type")]string response_type, [FromQuery(Name = "client_id")] string client_id, [FromQuery(Name = "state")] string state, [FromQuery(Name = "bank_id")] string? bank_id, [FromQuery(Name = "token")] string? token) =>
+апка.ВідобразитиGet("/v1/bank/oauth2/authorize", ([FromQuery(Name = "response_type")]string типЗапиту, [FromQuery(Name = "client_id")] string ідКлієнта, [FromQuery(Name = "state")] string state, [FromQuery(Name = "bank_id")] string? ідБанка, [FromQuery(Name = "token")] string? token) =>
 {
     if (token is null)
         return Results.Content("<h1>Привіт світ/h1>", "text/html");
 
 	return Results.Content($"Redirecting to {серверДії}/api/v1/auth/bank-id/code/callback?code={код}.", statusCode: 302);
 });
+
+апка.ВідобразитиPost("/v1/bank/oauth2/token", ([FromForm(Name = "code")] string code, [FromForm(Name = "grant_type")] string grant_type, [FromForm(Name = "client_id")] string ідКлієнта, [FromForm(Name = "client_secret")] string client_secret) =>
+{
+	return Results.Content($$"""
+{
+ "token_type": "bearer",
+ "access_token": "access_token",
+ "expires_in": 180
+}
+""");
+}).ВідключитиАнтіПідробку();
 
 апка.ВикористовуватиПеренаправленняHttps();
 апка.ВикористовуватиHttpПротоколювання();
