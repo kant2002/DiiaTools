@@ -14,3 +14,7 @@ BANK_ID_API_HOST=localhost
 BANK_ID_API_PORT=55032
 GRPC_BANK_ID_CRYPTO_SERVICE_ADDRESS=localhost:5192
 ```
+
+
+docker build -t fakediiacrypto:0.0.1 .. -f .\Dockerfile
+docker build -t fakebankid:0.0.1 .. -f .\Dockerfile
