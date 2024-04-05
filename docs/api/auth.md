@@ -28,7 +28,7 @@ $authUrl = $(curl -X GET "$domain/api/v3/auth/bankid/auth-url?processId=$process
  -H "platform-type: Android" `
  -H "platform-version: 12") | ConvertFrom-JSON
 $authUrl = $authUrl.authUrl	
-$url = $authUrl.Replace("signIn.html", "/bankid/signIn") + "&token=DF8BC4DB62C3F5426C1549E301600"
+$url = $authUrl.Replace("signIn.html", "/bankid/signIn").Replace("bankid:8081", "localhost:55032") + "&token=DF8BC4DB62C3F5426C1549E301600"
 
 $redirectToCode = $(curl -X GET $url `
  -H "Accept: application/json" `
