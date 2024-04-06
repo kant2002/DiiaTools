@@ -35,10 +35,10 @@ $redirectToCode = $(curl -X GET $url `
  -H "mobile_uid: d85a2569-dbaf-4130-828f-8b5ddfd2512f" `
  -H "app-version: 1.0.1" `
  -H "platform-type: Android" `
- -H "platform-version: 12")
+ -H "platform-version: 12" -k)
 $redirectToCode = $redirectToCode.Replace("Redirecting to ", "").Trim('.')
 $redirectToCode = $redirectToCode.Replace("$domain/api/v1/auth/bank-id/code/callback?code=", "");
-$verifyProcess = $(curl -X GET "$domain/api/v1/auth/bankid/$redirectToCode/verify?processId=$processId&bankId=user1" `
+$verifyProcess = $(curl -X GET "$domain/api/v1/auth/bankid/$redirectToCode/verify?processId=$processId&bankId=$bankId" `
  -H "Accept: application/json" `
  -H "mobile_uid: d85a2569-dbaf-4130-828f-8b5ddfd2512f" `
  -H "app-version: 1.0.1" `
@@ -69,6 +69,8 @@ curl -X GET "$domain/api/v3/public-service/catalog" `
 ```
 
 ## Аналіз серверної частини
+
+*Кінцева точка тестового авторизаційного токена є лише для середовища рівня відладки*
 
 Виклик створення тестового авторизаційного токена із невалідним РНОКПП (111)
 ```shell
